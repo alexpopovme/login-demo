@@ -1,0 +1,15 @@
+@mixin flexCenter {
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin fitImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@mixin buttonHoverEffect {
+  transform: scale(1.05);
+  filter: invert(40%);
+}

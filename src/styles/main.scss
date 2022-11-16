@@ -1,0 +1,39 @@
+@use 'mixins' as *;
+@use 'vars' as *;
+
+:root {
+  font-family: Roboto, Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  color: $mainColor;
+  //min-width: 420px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 100%;
+}
+
+
+.app-container {
+  position: relative;
+  padding-top: $headerHeight;
+}
+
+.container {
+  position: relative;
+  margin: 0 auto;
+  padding: 1.5rem $mainOffset;
+  max-width: 1154px;
+}
+
+.link {
+  color: $mainColor;
+  &:hover {
+    text-decoration: none;
+  }
+}
