@@ -4,7 +4,7 @@
 set -e
 
 # build
-pnpm run build
+pnpm run build-gh
 
 # navigate into the build output directory
 cd dist
