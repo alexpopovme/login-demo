@@ -23,11 +23,5 @@ export default {
       method: 'get',
       url: `${this.url}/account/identity/${id}/`
     }
-  },
-  getRolesById (id: string) {
-    return {
-      method: 'get',
-      url: `${this.url}/account/company/${id}/roles/`
-    }
   }
 }

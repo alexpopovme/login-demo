@@ -10,6 +10,7 @@ const authPersonalData = reactive({
 const authorized = ref(false)
 const userAuthData = ref()
 const userData = ref()
+const showRole = ref(false)
 
 const auth = async () => {
   const response = await userService.auth({
@@ -29,8 +30,6 @@ const getUserData = async () => {
     company: company.data.data
   }
 }
-
-
 
 </script>
 
@@ -77,16 +76,19 @@ const getUserData = async () => {
       <div class="user-data"
            v-if="userData"
       >
-        <div class="description-wrap">
-          <el-descriptions title="User Info">
-            <el-descriptions-item label="">{{userData.user.surname}}</el-descriptions-item>
-            <el-descriptions-item label="">{{userData.user.name}}</el-descriptions-item>
-            <el-descriptions-item label="">{{userData.user.patronymic}}</el-descriptions-item>
-            <el-descriptions-item label="">{{userData.user.phone}}</el-descriptions-item>
-          </el-descriptions>
-          <el-descriptions title="Company Info">
-            <el-descriptions-item label="Компания">{{userData.company.name}}</el-descriptions-item>
-          </el-descriptions>
+        <div class="table-wrap">
+          <el-table :data="[userData.user]">
+            <el-table-column prop="name" label="Имя" />
+            <el-table-column prop="patronymic" label="Отчество" />
+            <el-table-column prop="surname" label="Фамилия" />
+            <el-table-column prop="phone" label="Тел." />
+            <el-table-column label="Роль">
+              <template #default>
+                <span v-if="showRole">{{userData.identity.role}}</span>
+                <el-button link type="primary" size="small" @click="showRole = true" v-if="!showRole">Show</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
       </div>
     </div>
@@ -112,13 +114,14 @@ const getUserData = async () => {
   }
 }
 
-.description-wrap {
-  width: 20em
-}
-
 .user-data-wrap {
   display: flex;
   @include flexCenter;
   margin: 3em;
 }
+
+.user-data {
+  width: 100%;
+}
+
 </style>

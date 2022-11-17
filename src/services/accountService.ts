@@ -21,12 +21,6 @@ class AccountService {
       headers: authHeader()
     })
   }
-  async getRolesById (id: string) {
-    return axios({
-      ...apiEndpoints.getRolesById(id),
-      headers: authHeader()
-    })
-  }
 }
 
 export default new AccountService()
