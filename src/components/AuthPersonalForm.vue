@@ -89,6 +89,10 @@ const getUserData = async () => {
               </template>
             </el-table-column>
           </el-table>
+          <div class="user-data__company">
+            <h4>Компания</h4>
+            <span>{{userData.company.name}}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -122,6 +126,9 @@ const getUserData = async () => {
 
 .user-data {
   width: 100%;
+  &__company {
+     margin-top: 1em;
+  }
 }
 
 </style>

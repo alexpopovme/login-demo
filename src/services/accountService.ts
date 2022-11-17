@@ -6,19 +6,19 @@ class AccountService {
   async getUserById (id: string) {
     return axios({
       ...apiEndpoints.getUserById(id),
-      headers: authHeader()
+      headers: await authHeader()
     })
   }
   async getCompanyById (id: string) {
     return axios({
       ...apiEndpoints.getCompanyById(id),
-      headers: authHeader()
+      headers: await authHeader()
     })
   }
   async getIdentityById (id: string) {
     return axios({
       ...apiEndpoints.getIdentityById(id),
-      headers: authHeader()
+      headers: await authHeader()
     })
   }
 }

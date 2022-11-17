@@ -1,8 +1,12 @@
-export default function authHeader() {
+import { validateToken } from '@/moduls/validateToken'
+
+export default async function authHeader() {
   let user = JSON.parse(localStorage.getItem('user') as string);
 
-  if (user && user.key) {
-    return { 'Authorization': user.key };
+  const key = await validateToken()
+
+  if (user && key) {
+    return { 'Authorization': key };
   } else {
     return {};
   }

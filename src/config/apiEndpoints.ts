@@ -23,5 +23,11 @@ export default {
       method: 'get',
       url: `${this.url}/account/identity/${id}/`
     }
+  },
+  refreshToken () {
+    return {
+      method: 'post',
+      url: `${this.url}/auth/refresh/`
+    }
   }
 }
