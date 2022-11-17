@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch, nextTick } from 'vue'
 import userService from '../services/userService'
 import accountService from '@/services/accountService'
 
+const baseUrl = ref('http://dev-api.rnsb.ru/')
 const authPersonalData = reactive({
   login: '',
   password: ''
 })
 const authorized = ref(false)
 const userAuthData = ref()
-const userData = ref()
+const userData = reactive({})
 const showRole = ref(false)
+const userDataUpload = ref(null)
+const avatarImageUrl = ref('--')
 
 const auth = async () => {
   const response = await userService.auth({
@@ -21,16 +24,69 @@ const auth = async () => {
 }
 
 const getUserData = async () => {
-  const user = await accountService.getUserById(userAuthData.value.identity)
-  const identity = await accountService.getIdentityById(userAuthData.value.identity)
-  const company = await accountService.getCompanyById(identity.data.data.company)
-  userData.value = {
-    user: user.data.data,
-    identity: identity.data.data,
-    company: company.data.data
-  }
+  const id = userAuthData.value.identity
+  const req = [
+    ['user', accountService.getUserById(id)],
+    ['identity', accountService.getIdentityById(id)],
+    ['images', accountService.getUserImagesById(id)]
+  ]
+  const result = await Promise.all(req.map((item) => item[1]))
+
+  req.forEach((item, idx) => {
+    const key = item[0]
+    const value = result[idx].data.data
+    if (value) {
+      userData[key] = value
+    }
+  })
+
+  const company = await accountService.getCompanyById(userData.identity.company)
+  userData.company = company.data.data
+  userData.id = id
+
+  await nextTick(() => {
+    setAvatarImageUrl()
+  })
+
 }
 
+watch(avatarImageUrl, (val) => {
+   console.log(val)
+})
+
+
+const uploadUserImage = async () => {
+  const formData = new FormData()
+  formData.append('object_type', 'account__user')
+  formData.append('object_id', userData.id)
+  formData.append('title', 'test-img')
+  formData.append('file', userDataUpload.value.files[0])
+  const result = await accountService.uploadUserImage(formData)
+  if (result.data.success) {
+    if (!userData.images) {
+      userData.images = [result.data.data]
+    }else {
+      userData.images[0] = result.data.data
+    }
+  }
+
+  console.log(userData.images[0])
+
+  await nextTick(() => {
+    setAvatarImageUrl()
+  })
+}
+
+const deleteUserImage = async () => {
+   const result = await accountService.deleteUserImage(userData.images[0].id)
+  avatarImageUrl.value = null
+}
+
+const setAvatarImageUrl = () => {
+  if (userData.images && userData.images.length) {
+    avatarImageUrl.value = `${baseUrl.value}${userData.images[0].thumbnail}`
+  }
+}
 </script>
 
 <template>
@@ -69,12 +125,12 @@ const getUserData = async () => {
   <div v-else>
     <div class="user-data-wrap">
       <el-button
-        v-if="!userData"
+        v-if="!userData.id"
         @click="getUserData">
         Get user data
       </el-button>
       <div class="user-data"
-           v-if="userData"
+           v-if="userData.id"
       >
         <div class="table-wrap">
           <el-table :data="[userData.user]">
@@ -89,9 +145,19 @@ const getUserData = async () => {
               </template>
             </el-table-column>
           </el-table>
+          <div class="user-data__ava-wrap">
+            <div class="user-data__ava">
+              <span>Фото</span>
+              <el-avatar shape="square" :size="50" :src="avatarImageUrl" />
+              <el-link @click="deleteUserImage">Delete</el-link>
+            </div>
+            <div class="user-data__add-photo" v-if="!avatarImageUrl">
+              <input ref="userDataUpload" type="file" @change="uploadUserImage">
+            </div>
+          </div>
           <div class="user-data__company">
             <h4>Компания</h4>
-            <span>{{userData.company.name}}</span>
+            <span>{{userData.company?.name}}</span>
           </div>
         </div>
       </div>
@@ -128,6 +194,21 @@ const getUserData = async () => {
   width: 100%;
   &__company {
      margin-top: 1em;
+  }
+  &__ava-wrap {
+    padding-top: 1em;
+    display: flex;
+    align-items: end;
+  }
+  &__ava {
+    width: 4em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  &__add-photo > div {
+    display: flex;
+    align-items: end;
   }
 }
 

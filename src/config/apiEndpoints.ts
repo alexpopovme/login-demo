@@ -24,6 +24,24 @@ export default {
       url: `${this.url}/account/identity/${id}/`
     }
   },
+  getUserImagesById (id: string) {
+    return {
+      method: 'get',
+      url: `${this.url}/media/image/account__user/${id}/`
+    }
+  },
+  uploadUserImage () {
+    return {
+      method: 'post',
+      url: `${this.url}/media/image/upload/`
+    }
+  },
+  deleteUserImage (imageId: string) {
+    return {
+      method: 'delete',
+      url: `${this.url}/media/image/${imageId}/`
+    }
+  },
   refreshToken () {
     return {
       method: 'post',

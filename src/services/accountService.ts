@@ -21,6 +21,28 @@ class AccountService {
       headers: await authHeader()
     })
   }
+  async getUserImagesById (id: string) {
+    return axios({
+      ...apiEndpoints.getUserImagesById(id),
+      headers: await authHeader()
+    })
+  }
+  async uploadUserImage (formData) {
+    return axios({
+      ...apiEndpoints.uploadUserImage(),
+      headers: {
+        ...await authHeader(),
+        'Content-Type': 'multipart/form-data'
+      },
+      data: formData
+    })
+  }
+  async deleteUserImage (imageId: string) {
+    return axios({
+      ...apiEndpoints.deleteUserImage(imageId),
+      headers: await authHeader(),
+    })
+  }
 }
 
 export default new AccountService()
